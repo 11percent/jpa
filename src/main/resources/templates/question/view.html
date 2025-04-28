@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head::myHead('WRITE')}"></head>
+
+<body>
+<header th:replace="~{fragments/header}"></header>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <h2 class="my-5">VIEW</h2>  <!--mt-1~5 mb-1~5 my-1~5 -->
+            <div class="col-12">
+                <label for="title" class="form-label fw-bold">TITLE</label>
+                <input type="text" class="form-control" id="title" placeholder="제목을 씁니다." name="title"
+                       th:value="${questionDto.title}" readonly>
+            </div>
+            <div class="col-12">
+                <label for="content" class="form-label fw-bold">CONTENT</label>
+                <textarea class="form-control" id="content" placeholder="내용을 씁니다." name="content"
+                          th:text="${questionDto.content}"></textarea>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary" id="btn-signin">WRITE</button>
+                <a href="" class="btn btn-primary" th:href="@{/question/modify/{id}(id=${questionDto.id})}">MODIFY</a>
+            </div>
+            <div class="mt-5">
+                <form action="" th:action="@{|/comment/write/${questionDto.id}|}" method="post">
+                    <div class="col-12">
+                        <label for="comment" class="form-label fw-bold">COMMENT</label>
+                        <textarea type="text" class="form-control" id="comment" placeholder="댓글을 씁니다."
+                                  name="content"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary" id="btn-comment">COMMENT</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="mt-5 mx-auto" style="width: 70%;">
+                <ul id="comment-list" class="list-unstyled">
+                    <th:block th:each="item : ${questionDto.commentList}">
+                        <li class="d-flex justify-content-between align-items-center border-bottom py-2" th:attr="data-id=${item.id}">
+                            <div class="d-flex flex-column flex-md-row justify-content-between w-100 align-items-center">
+                                <div class="me-3" th:text="${item.content}"></div>
+                                <div class="text-muted small me-2" th:if="${item.writer != null}" th:text="${item.writer.userName}"></div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger btn-del px-2 py-0" th:data-id="${item.id}" style="font-size: 0.75rem;">❌</button>
+                        </li>
+                    </th:block>
+
+                </ul>
+            </div>
+
+        </div>
+
+
+        <div class="col-md-2"></div>
+
+
+    </div>
+</div>
+<footer th:replace="~{fragments/footer}"></footer>
+
+<script th:inline="javascript">
+    const btnComment = document.querySelector("#btn-comment");
+    const comment = document.querySelector("#comment");
+    const commentList = document.querySelector("#comment-list");
+    const questionId = [[${questionDto.id}]];
+
+    btnComment.addEventListener("click", (e) => {
+        e.preventDefault();
+        const sendData = {content: comment.value};
+
+        fetch(`/comment/write-ajax/${questionId}`, {
+            method: "post",
+            headers: {"Content-Type": "application/json; charset=UTF-8"},
+            body: JSON.stringify(sendData)
+        })
+            .then(response => response.json())
+            .then(json => {
+                console.log(json);
+                const content = json.comment.content;
+                const writerName = json.comment.writerName  || "익명";
+                const commentId = json.comment.id;
+
+                commentList.innerHTML += `
+                              <li class="d-flex justify-content-between align-items-center border-bottom py-2" data-id="${commentId}">
+                                <div class="d-flex flex-column flex-md-row justify-content-between w-100 align-items-center">
+                                  <div class="me-3">${content}</div>
+                                  <div class="text-muted small me-2">${writerName}</div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger btn-del px-2 py-0" data-id="${commentId}" style="font-size: 0.75rem;">❌</button>
+                              </li>`;
+                comment.value = "";
+            })
+
+    });
+    //이벤트 위임
+    commentList.addEventListener("click", (e) => {
+        // console.log(e.currentTarget)
+        // console.log(e.target);
+        const btn = e.target.closest("button");
+        if (btn && btn.classList.contains("btn-del")) {
+            const commentId = btn.getAttribute("data-id");
+            fetch(`/comment/delete/${commentId}`, {
+                method: "delete"
+            }).then(response => response.text())
+                .then(result => {
+                    if (result === "ok") {
+                        btn.closest("li").remove();
+                    } else {
+                        alert("본인이 작성한 댓글만 삭제할 수 있습니다.")
+                    }
+                });
+        }
+    });
+
+</script>
+
+
+</body>
+</html>

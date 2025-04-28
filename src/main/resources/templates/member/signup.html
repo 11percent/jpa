@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head::myHead('SIGN UP')}"></head>
+<body>
+<!--    validation 유효성 검증-->
+<header th:replace="~{fragments/header}"></header>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+
+        </div>
+        <div class="col-md-8">
+            <h2 class="my-4 mx-4">SIGN UP</h2>
+            <form class="row g-3" action="../member/signup" method="post" name="signup" th:object="${memberDto}"
+                  enctype="multipart/form-data">
+                <div class="col-12">
+                    <label for="user-id" class="form-label">USER ID</label>
+                    <div class="row">
+                        <div class="col-9">
+                            <input type="text" class="form-control" id="user-id" placeholder="USER ID" name="userID"
+                                   value="여기다가 아이디 입력받을거에요." th:field="*{userID}">
+                        </div>
+                        <div class="col-3">
+                            <button id="btn-duplicate-id" class="btn btn-primary" type="button">DUPLICATE ID</button>
+                        </div>
+
+                    </div>
+                    <div class="alert" th:errors="*{userID}">여기에 에러 메세지</div>
+                </div>
+                <div class="col-12">
+                    <label for="user-pw" class="form-label">USER PW</label>
+                    <input type="password" class="form-control" id="user-pw" placeholder="PASSWORD" name="userPW">
+                    <div class="alert" th:errors="*{userPW}">여기에 에러 메세지</div>
+                </div>
+                <div class="col-12">
+                    <label for="user-pw-02" class="form-label">USER PW</label>
+                    <input type="password" class="form-control" id="user-pw-02" placeholder="PASSWORD CONFIRM"
+                           name="userPW02">
+                </div>
+                <div class="col-12">
+                    <label for="user-name" class="form-label">USER NAME</label>
+                    <input type="text" class="form-control" id="user-name" placeholder="FULL NAME" name="userName"
+                           th:field="*{userName}">
+                    <div class="alert" th:errors="*{userName}">여기에 에러 메세지</div>
+                </div>
+
+                <div class="col-12">
+                    <div class="row">
+                        <label for="email" class="form-label">Email</label>
+                        <div class="col-9">
+                            <input type="text" class="form-control" id="email" name="userEmail"
+                                   th:field="*{userEmail}">
+                        </div>
+                        <div class="col-3">
+                            <button id="btn-email-send" class="btn btn-primary" type="button">인증번호 받기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12" style="display: none" id="email-confirm-container">
+                    <div class="row">
+                        <label for="email-confirm" class="form-label fw-bold">인증하기</label>
+                        <div class="col-9">
+                            <input type="text" class="form-control" id="email-confirm">
+                        </div>
+                        <div class="col-3">
+                            <button id="btn-email-confirm" class="btn btn-primary"
+                                    type="button">이메일 인증
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label for="zipcode" class="form-label">ZIPCODE</label>
+                    <div class="row">
+                        <div class="col-4">
+                            <input type="text" class="form-control" id="zipcode" placeholder="우편번호"
+                                   name="zipcode"
+                                   th:field="*{zipcode}">
+                        </div>
+                        <div class="col-3">
+                            <button id="btn-postcode" class="btn btn-primary" type="button">우편번호 찾기</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-8"></div>
+                <div class="col-6">
+                    <label for="inputAddress01" class="form-label">Address</label>
+                    <input type="text" class="form-control" id="inputAddress01" placeholder="주소"
+                           name="address01"
+                           th:field="*{address01}">
+                </div>
+                <div class="col-6">
+                    <label for="inputAddress02" class="form-label">Address Detail</label>
+                    <input type="text" class="form-control" id="inputAddress02" placeholder="상세주소"
+                           name="address02"
+                           th:field="*{address02}">
+                </div>
+
+                <div class="col-6">
+                    <label for="tel" class="form-label">TEL</label>
+                    <input type="text" class="form-control" id="tel" placeholder="전화번호" name="tel"
+                           th:field="*{tel}">
+                </div>
+
+<!--                <div class="col-12">-->
+<!--                    <label for="profile" class="form-label">Email</label>-->
+<!--                    <input type="file" class="form-control" id="profile" name="profile" th:field="*{profile}">-->
+<!--                </div>-->
+
+
+                <div class="col-12">
+                    <button class="btn btn-primary" id="btnSignUp">Sign Up</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-2">
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container (하단 오른쪽 고정) -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div id="emailToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="emailToastBody">인증 메시지</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer}"></footer>
+<script>
+    const btnDuplicateId = document.querySelector("#btn-duplicate-id");
+    const userID = document.querySelector("#user-id");
+    const btnEmailSend = document.querySelector("#btn-email-send");
+    const emailConfirmContainer = document.querySelector("#email-confirm-container");
+    const email = document.querySelector("#email");
+    const emailConfirm = document.querySelector("#email-confirm");
+    const btnEmailConfirm = document.querySelector("#btn-email-confirm");
+    let confirmNumber = null;
+
+    btnEmailConfirm.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (confirmNumber === emailConfirm.value) {
+            showToast("이메일 인증 완료!", true);
+        } else {
+            showToast("이메일 인증번호가 올바르지 않습니다.", false);
+        }
+    })
+
+    btnEmailSend.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (email.value.trim() === "") {
+            alert("이메일을 확인해주세요.");
+            return;
+        }
+        emailConfirmContainer.style.display = "block";
+        const sendJson = {userEmail: email.value}
+        fetch("../mail/email-confirm", {
+            method: "post",
+            headers: {
+                "Content-type": "application/json",
+            },
+            body: JSON.stringify(sendJson)
+        })
+            .then(response => response.json())
+            .then(json => {
+                console.log(json);
+                confirmNumber = json.confirmNumber
+            })
+    })
+
+    btnDuplicateId.addEventListener("click", (e) => {
+        e.preventDefault();
+        fetch("../member/id-check?userID=" + userID.value)
+            .then(response => response.json())
+            .then(json => {
+                if (json.data.count > 0) {
+                    alert("이미 사용중인 아이디입니다.");  // 중복이면 경고
+                } else {
+                    alert("사용 가능합니다."); // 중복 아니면 통과
+                }
+            });
+    })
+
+    function showToast(message, isSuccess = true) {
+        const toastEl = document.getElementById('emailToast');
+        const toastBody = document.getElementById('emailToastBody');
+
+        toastBody.textContent = message;
+
+        // 토스트 색상 변경
+        toastEl.classList.remove('text-bg-primary', 'text-bg-danger', 'text-bg-success');
+        toastEl.classList.add(isSuccess ? 'text-bg-success' : 'text-bg-danger');
+
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }
+
+
+</script>
+
+</body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

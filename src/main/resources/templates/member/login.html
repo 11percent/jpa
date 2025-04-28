@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head::myHead('LOG IN')}"></head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h2 class="my-5">LOGIN</h2>
+            <form class="row g-3" action="/member/login" method="post" name="login">
+                <div th:if="${error}" class="alert alert-danger">
+                    아이디 패스워드 확인해 주세요.222
+                </div>
+                <div class="col-12">
+                    <label for="user-id" class="form-label">USER ID</label>
+                    <input type="text" class="form-control" id="user-id" placeholder="USER ID" name="userID">
+                </div>
+                <div class="col-12">
+                    <label for="user-pw" class="form-label">PASSWORD</label>
+                    <input type="password" class="form-control" id="user-pw" placeholder="PASSWORD" name="userPW">
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-primary" id="btn-signin">Login</button>
+                    <a href="/mail/find-password" class="btn btn-primary">Find Password</a>
+                </div>
+                <div class="row mt-3">
+                    <a href="/oauth2/authorization/google" class="btn btn-outline-dark">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" width="20" height="20" style="margin-right: 8px;">
+                        Google 로그인
+                    </a>
+
+                    <!-- Kakao Login Button -->
+                    <a href="/oauth2/authorization/kakao" class="btn btn-warning text-dark">
+                        <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" alt="Kakao" width="20" height="20" style="margin-right: 8px;">
+                        Kakao 로그인
+                    </a>
+
+                    <!-- Naver Login Button -->
+                    <a href="/oauth2/authorization/naver" class="btn btn-success">
+                        <img src="https://static.nid.naver.com/oauth/small_g_in.PNG" alt="Naver" width="20" height="20" style="margin-right: 8px;">
+                        Naver 로그인
+                    </a>
+                </div>
+
+            </form>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
+<footer th:replace="~{fragments/footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,25 @@
+package com.took.jpa.repository;
+
+import com.took.jpa.dto.MemberDto;
+import com.took.jpa.entity.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface MemberRepository extends JpaRepository<Member, Integer> {
+    Optional<Member> findByUserID(String userID);
+    Optional<Member> findByUserEmail(String userEmail);
+    Optional<Member> findByUserIDAndUserEmail(String userID, String userEmail);
+    List<Member> findByUserNameLike(String userName);
+    Optional<Member> findByUserIDOrUserEmail(String userID, String userName);
+    List<Member> findByAgeBetween(int min, int max);
+
+    @Query("select m from Member m where m.userName =:userName")
+    List<Member> findByCustomMember(@Param("userName") String userName);
+
+    @Query(value = "select m from entity_Member m where m.userName =:userName", nativeQuery = true)
+    List<Member> findByCustomNativeMember(@Param("userName") String userName);
+}

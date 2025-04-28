@@ -1,0 +1,30 @@
+.alert {
+    font-size: 12px;
+    margin-top: 5px;
+    color: #ff0000;
+}
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.list li {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+.table tbody .subject {
+    text-align: left;
+}
+.table {
+    text-align: center;
+}
+.view td {
+    text-align: left;
+}
+
+
+
+
+
+
